@@ -1,6 +1,6 @@
 package main
 
-import "github.com/sureshk/birthday-server/api"
+import "github.com/sureshk/birthday-server/src/api"
 
 func main() {
 	api.Run()
