@@ -1,0 +1,73 @@
+apiVersion: apps/v1 
+kind: Deployment
+metadata:
+  labels:
+    run: birthday-server-svc
+  name: birthday-server-svc
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      run: birthday-server-svc
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        run: birthday-server-svc
+    spec:
+      containers:
+      - image: gcr.io/birthday-server/birthday-server:v1
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            memory: "200Mi"
+            cpu: "1"
+          requests:
+            memory: "100Mi"
+            cpu: "0.5"
+        envFrom:
+          - secretRef:
+              name: mysql-secret
+        name: birthday-servers-svc
+        livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+              httpHeaders:
+                - name: Host
+                  value: KubernetesLivenessProbe
+            initialDelaySeconds: 20
+        readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+              httpHeaders:
+                - name: Host
+                  value: KubernetesLivenessProbe
+            initialDelaySeconds: 20
+        ports:
+        - containerPort: 8080
+          name: http-server
+      dnsPolicy:  ClusterFirst
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: birthday-server-svc
+  name: birthday-server-svc
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 8080
+      protocol: TCP
+  selector:
+    run: birthday-server-svc
+  loadBalancerSourceRanges:
+  - 0.0.0.0/0

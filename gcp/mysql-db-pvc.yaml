@@ -1,0 +1,17 @@
+apiVersion: v1
+# Create a PersistentVolumeClaim to request a PersistentVolume storage 
+kind: PersistentVolumeClaim
+# claim name and labels
+metadata:
+  name: mysql-pv-claim
+  labels:
+    app: birthday-mysql
+# Access mode and resource limits
+spec:
+  storageClassName: standard
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage:  5Gi
+

@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: birthday-mysql
+  labels:
+    app: birthday-mysql
+spec:
+  selector:
+    matchLabels:
+      app: birthday-mysql
+      tier: mysql
+  strategy:
+    type: Recreate
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: birthday-mysql
+        tier: mysql
+    spec:
+      containers:
+        - image: mysql:8
+          name: mysql
+          args:
+            - "--default-authentication-plugin=mysql_native_password"
+          imagePullPolicy: "IfNotPresent"
+          envFrom:
+          - secretRef:
+              name: mysql-secret
+          ports:
+          - containerPort: 3306
+            name: mysql
+          volumeMounts:
+            - mountPath: /var/lib/mysql
+              name: mysql-persistent-storage
+      volumes:
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: mysql-pv-claim
