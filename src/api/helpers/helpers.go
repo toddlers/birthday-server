@@ -12,7 +12,7 @@ import (
 )
 
 type MalformedRequest struct {
-	Status  int
+	Status int
 	Msg    string
 }
 
