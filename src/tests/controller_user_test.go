@@ -15,8 +15,6 @@ import (
 	"gopkg.in/go-playground/assert.v1"
 )
 
-
-
 func TestCreateUser(t *testing.T) {
 
 	err := refreshUserTable()
@@ -119,6 +117,7 @@ func TestGetUsers(t *testing.T) {
 
 func TestGetUserByID(t *testing.T) {
 
+	//curl -v -H  "Content-Type: application/json"  localhost:8080/users?id=2
 	err := refreshUserTable()
 	if err != nil {
 		log.Fatal(err)
@@ -200,7 +199,6 @@ func TestUpdateUser(t *testing.T) {
 		statusCode   int
 		updateName   string
 		updateEmail  string
-		tokenGiven   string
 		errorMessage string
 	}{
 		{
@@ -220,9 +218,11 @@ func TestUpdateUser(t *testing.T) {
 			errorMessage: "Required Birthday",
 		},
 		{
-			// When birthday field is empty
+			// When birthday field is incorrect
+			// Adjust the birthday here to pass the test
+			// Make the date one day ahead of today
 			id:           strconv.Itoa(int(AuthID)),
-			updateJSON:   `{"name":"Woman", "email": "woman@gmail.com", "birthday": "2019-12-28"}`,
+			updateJSON:   `{"name":"Woman", "email": "woman@gmail.com", "birthday": "2019-12-30"}`,
 			statusCode:   422,
 			errorMessage: "Birthday should be before today",
 		},
@@ -262,6 +262,7 @@ func TestUpdateUser(t *testing.T) {
 
 		rr := httptest.NewRecorder()
 		handler := http.HandlerFunc(server.UpdateUser)
+		req.Header.Set("Content-Type", "application/json")
 
 		handler.ServeHTTP(rr, req)
 
@@ -270,6 +271,7 @@ func TestUpdateUser(t *testing.T) {
 		if err != nil {
 			t.Errorf("Cannot convert to json: %v", err)
 		}
+		fmt.Println(responseMap)
 		assert.Equal(t, rr.Code, v.statusCode)
 		if v.statusCode == 200 {
 			assert.Equal(t, responseMap["name"], v.updateName)

@@ -22,13 +22,12 @@ type User struct {
 	UpdatedAt time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"updated_at"`
 }
 
-func (u *User) Prepare() error {
+func (u *User) Prepare() {
 	u.ID = 0
 	u.Name = html.EscapeString(strings.TrimSpace(u.Name))
 	u.Birthday = html.EscapeString(strings.TrimSpace(u.Birthday))
 	u.CreatedAt = time.Now()
 	u.UpdatedAt = time.Now()
-	return nil
 }
 func (u *User) Validate(action string) error {
 	switch strings.ToLower(action) {
@@ -39,17 +38,17 @@ func (u *User) Validate(action string) error {
 		if !u.IsUsernameCorrect() {
 			return errors.New("Only alphanumeric usernames accepted")
 		}
-		if u.Email == "" {
-			return errors.New("Required Email")
-		}
-		if err := checkmail.ValidateFormat(u.Email); err != nil {
-			return errors.New("Invalid Email")
-		}
 		if u.Birthday == "" {
 			return errors.New("Required Birthday")
 		}
 		if !u.IsBirthdayCorrect() {
 			return errors.New("Birthday should be before today")
+		}
+		if u.Email == "" {
+			return errors.New("Required Email")
+		}
+		if err := checkmail.ValidateFormat(u.Email); err != nil {
+			return errors.New("Invalid Email")
 		}
 
 		return nil
@@ -104,6 +103,7 @@ func (u *User) FindUserByID(db *gorm.DB, uid uint32) (*User, error) {
 }
 
 func (u *User) UpdateAUser(db *gorm.DB, uid uint32) (*User, error) {
+	fmt.Println(u)
 	db = db.Debug().Model(&User{}).Where("id = ?", uid).Take(&User{}).UpdateColumns(
 		map[string]interface{}{
 			"name":       u.Name,
@@ -152,7 +152,6 @@ func (u *User) IsBirthdayCorrect() bool {
 	today := time.Now()
 	return born.Before(today)
 }
-
 
 func (u *User) CalculateDays(birthday string) int {
 	//yyy-mm-dd
