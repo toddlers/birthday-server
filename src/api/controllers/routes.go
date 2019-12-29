@@ -1,9 +1,12 @@
 package controllers
 
-import "github.com/sureshk/birthday-server/src/api/middlewares"
+import (
+	"github.com/sureshk/birthday-server/src/api/logger"
+	"github.com/sureshk/birthday-server/src/api/middlewares"
+)
 
 func (s *Server) initializeRoutes() {
-	s.Router.Use(middlewares.DebugRequestMiddleware)
+	s.Router.Use(logger.Logger)
 	s.Router.Use(middlewares.AddContentTypeMiddleware)
 	// Home Route
 	s.Router.HandleFunc("/", s.Home).Methods("GET")
