@@ -117,7 +117,7 @@ func TestGetUsers(t *testing.T) {
 
 func TestGetUserByID(t *testing.T) {
 
-	//curl -v -H  "Content-Type: application/json"  localhost:8080/users?id=2
+	//curl -v -H  "Content-Type: application/json"  localhost:8080/users/2
 	err := refreshUserTable()
 	if err != nil {
 		log.Fatal(err)

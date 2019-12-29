@@ -23,13 +23,16 @@ func init() {
 	logrus.SetLevel(logrus.InfoLevel)
 }
 
-func Logger(w http.ResponseWriter, r *http.Request) {
-	start := time.Now()
-	logrus.WithFields(logrus.Fields{
-		"method":     r.Method,
-		"path":       r.RequestURI,
-		"ip":         r.RemoteAddr,
-		"duration":   time.Since(start),
-		"user_agent": r.UserAgent(),
-	}).Info()
+func Logger(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		start := time.Now()
+		logrus.WithFields(logrus.Fields{
+			"method":     r.Method,
+			"path":       r.RequestURI,
+			"ip":         r.RemoteAddr,
+			"duration":   time.Since(start),
+			"user_agent": r.UserAgent(),
+		}).Info()
+		next.ServeHTTP(w, r)
+	})
 }
