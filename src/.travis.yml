@@ -2,15 +2,3 @@ language: go
 os: linux
 go: 1.x
 language: go
-linters:
-  enable:
-    - deadcode
-    - errcheck
-    - goimports
-    - golint
-    - ineffassign
-    - structcheck
-    - varcheck
-    - govet
-    - unconvert
-  disable-all: true
