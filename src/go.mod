@@ -1,4 +1,4 @@
-module github.com/sureshk/birthday-server/src
+module github.com/toddlers/birthday-server/src
 
 go 1.13
 

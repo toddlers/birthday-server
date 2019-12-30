@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"github.com/sureshk/birthday-server/src/api/logger"
-	"github.com/sureshk/birthday-server/src/api/middlewares"
+	"github.com/toddlers/birthday-server/src/api/logger"
+	"github.com/toddlers/birthday-server/src/api/middlewares"
 )
 
 func (s *Server) initializeRoutes() {

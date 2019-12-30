@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"github.com/jinzhu/gorm"
-	"github.com/sureshk/birthday-server/src/api/models"
+	"github.com/toddlers/birthday-server/src/api/models"
 )
 
 var users = []models.User{
