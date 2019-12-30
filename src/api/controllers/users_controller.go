@@ -11,7 +11,7 @@ import (
 	"github.com/toddlers/birthday-server/src/api/helpers"
 	"github.com/toddlers/birthday-server/src/api/models"
 	"github.com/toddlers/birthday-server/src/api/responses"
-	"github.com/toddlers/birthday-server/src/api/utils/formaterror"
+	"github.com/toddlers/birthday-server/src/api/utils"
 )
 
 func (server *Server) CreateUser(w http.ResponseWriter, r *http.Request) {
@@ -28,14 +28,14 @@ func (server *Server) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	user.Prepare()
-	err = user.Validate("")
+	err = user.Validate()
 	if err != nil {
 		responses.ERROR(w, http.StatusUnprocessableEntity, err)
 		return
 	}
 	userCreated, err := user.SaveUser(server.DB)
 	if err != nil {
-		formattedError := formaterror.FormatError(err.Error())
+		formattedError := utils.FormatError(err.Error())
 		responses.ERROR(w, http.StatusInternalServerError, formattedError)
 		return
 	}
@@ -93,7 +93,7 @@ func (server *Server) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user.Prepare()
-	err = user.Validate("update")
+	err = user.Validate()
 	if err != nil {
 		responses.ERROR(w, http.StatusUnprocessableEntity, err)
 		return
@@ -101,7 +101,7 @@ func (server *Server) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	updatedUser, err := user.UpdateAUser(server.DB, uint32(uid))
 	if err != nil {
-		formattedError := formaterror.FormatError(err.Error())
+		formattedError := utils.FormatError(err.Error())
 		responses.ERROR(w, http.StatusInternalServerError, formattedError)
 		return
 	}
