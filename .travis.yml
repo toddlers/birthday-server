@@ -1,0 +1,27 @@
+sudo: required
+
+language: go
+go:
+  - 1.13.5
+
+env:
+  - DOCKER_COMPOSE_VERSION=1.24.1
+
+services:
+  - docker
+
+before_install:
+  - sudo rm /usr/local/bin/docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - sudo mv docker-compose /usr/local/bin
+
+script:
+  - cd src
+  - docker-compose up -d --build
+  - docker exec -it full_db_mysql mysql -uroot -pmypassword 'CREATE USER "root"@"0.0.0.0/0" IDENTIFIED BY "mypassword"'
+  - docker exec -it full_db_mysql mysql -uroot -pmypassword 'GRANT ALL PRIVILEGES ON *.* TO "root"@"0.0.0.0/0"' 
+  - make test
+
+after_script:
+  - docker-compose down
