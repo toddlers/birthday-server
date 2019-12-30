@@ -222,7 +222,7 @@ func TestUpdateUser(t *testing.T) {
 			// Adjust the birthday here to pass the test
 			// Make the date one day ahead of today
 			id:           strconv.Itoa(int(AuthID)),
-			updateJSON:   `{"name":"Woman", "email": "woman@gmail.com", "birthday": "2019-12-30"}`,
+			updateJSON:   `{"name":"Woman", "email": "woman@gmail.com", "birthday": "2019-12-31"}`,
 			statusCode:   422,
 			errorMessage: "Birthday should be before today",
 		},
@@ -271,7 +271,6 @@ func TestUpdateUser(t *testing.T) {
 		if err != nil {
 			t.Errorf("Cannot convert to json: %v", err)
 		}
-		fmt.Println(responseMap)
 		assert.Equal(t, rr.Code, v.statusCode)
 		if v.statusCode == 200 {
 			assert.Equal(t, responseMap["name"], v.updateName)
