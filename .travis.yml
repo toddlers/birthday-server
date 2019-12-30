@@ -19,8 +19,6 @@ before_install:
 script:
   - cd src
   - docker-compose up -d --build
-  - docker exec -it full_db_mysql mysql -uroot -pmypassword 'CREATE USER "root"@"0.0.0.0/0" IDENTIFIED BY "mypassword"'
-  - docker exec -it full_db_mysql mysql -uroot -pmypassword 'GRANT ALL PRIVILEGES ON *.* TO "root"@"0.0.0.0/0"' 
   - make test
 
 after_script:
