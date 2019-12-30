@@ -1,0 +1,4 @@
+language: go
+go_import_path: github.com/toddlers/birthday-server
+os: linux
+go: 1.x
