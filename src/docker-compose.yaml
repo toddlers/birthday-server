@@ -46,7 +46,7 @@ services:
 
   
   fullstack-mysql:
-    image: mysql/mysql-server
+    image: mysql
     container_name: full_db_mysql
     ports: 
       - 3306:3306
