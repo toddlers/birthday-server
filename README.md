@@ -1,6 +1,9 @@
 # Birthday-server
 Google Container Engine  based app
 
+[![LICENSE](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Build Status](https://travis-ci.com/toddlers/birthday-server.svg?branch=master)](https://travis-ci.org/toddlers/birthday-server)
+
 ## The application
 
 
