@@ -8,10 +8,10 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
-	"github.com/sureshk/birthday-server/src/api/helpers"
-	"github.com/sureshk/birthday-server/src/api/models"
-	"github.com/sureshk/birthday-server/src/api/responses"
-	"github.com/sureshk/birthday-server/src/api/utils/formaterror"
+	"github.com/toddlers/birthday-server/src/api/helpers"
+	"github.com/toddlers/birthday-server/src/api/models"
+	"github.com/toddlers/birthday-server/src/api/responses"
+	"github.com/toddlers/birthday-server/src/api/utils/formaterror"
 )
 
 func (server *Server) CreateUser(w http.ResponseWriter, r *http.Request) {
