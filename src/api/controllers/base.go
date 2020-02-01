@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
@@ -33,7 +34,25 @@ func (server *Server) Initialize(DbDriver, DbUser, DbPassword, DbPort, DbHost, D
 	server.initializeRoutes()
 }
 
-func (server *Server) Run(addr string) {
-	fmt.Println("Listening to port 808")
-	log.Fatal(http.ListenAndServe(addr, server.Router))
+func (server *Server) makeHTTPServer(ip, port string) *http.Server {
+	srv := &http.Server{
+		//the maximum duration for reading the entire request, including the body
+		ReadTimeout: 1 * time.Second,
+		//the maximum duration before timing out writes of the response
+		WriteTimeout: 1 * time.Second,
+		//the maximum amount of time to wait for the next request
+		//when keep-alive is enabled
+		IdleTimeout: 30 * time.Second,
+		//the amount of time allowed to read request headers
+		ReadHeaderTimeout: 2 * time.Second,
+		Handler:           server.Router,
+		Addr:              fmt.Sprintf("%s:%s",ip, port),
+	}
+	return srv
+}
+
+func (server *Server) Run(ip, port string) {
+	srv := server.makeHTTPServer(ip, port)
+	fmt.Println("Listening to port 8080")
+	log.Fatal(srv.ListenAndServe())
 }

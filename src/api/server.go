@@ -34,6 +34,6 @@ func Run() {
 		os.Getenv("DB_HOST"),
 		os.Getenv("DB_NAME"))
 	seed.Load(server.DB)
-	server.Run(":8080")
+	server.Run("127.0.0.1", "8080")
 
 }

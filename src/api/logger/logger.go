@@ -2,17 +2,14 @@ package logger
 
 import (
 	"net/http"
-	"strconv"
 	"os"
+	"strconv"
 	"strings"
 	"time"
-	"sync"
+
 	"github.com/felixge/httpsnoop"
 	"github.com/sirupsen/logrus"
-	"https://github.com/kjk/siser"
 )
-
-var mmuLogHTTP sync.Mutex
 
 // LogReqInfo describes info about HTTP request
 type HTTPReqInfo struct {
@@ -59,7 +56,6 @@ func ipAddrFromRemoteAddr(s string) string {
 // taking into account http proxies
 
 func requestGetRemoteAddress(r *http.Request) string {
-
 	hdr := r.Header
 	hdrRealIP := hdr.Get("X-Real-Ip")
 	hdrForwardedFor := hdr.Get("X-Forwarded-For")
@@ -77,23 +73,19 @@ func requestGetRemoteAddress(r *http.Request) string {
 	return hdrRealIP
 }
 
-func logHTTPReq(ri *HTTPReqInfo){
-	var rec siser.Record
-	rec.Name = "httplog"
-	rec.Append("method", ri.method)
-	rec.Append("uri", ri.uri)
-	if ri.referer != ""{
-		rec.Append("referer", ri.referer)
-	}
-	rec.Append("ipaddr", ri.ipaddr)
-	rec.Append("code", strconv.Itoa(ri.code))
-	rec.Append("size", strconv.FormatInt(ri.size, 10))
+func logHTTPReq(ri *HTTPReqInfo) {
 	durMs := ri.duration / time.Millisecond
-	rec.Append("duration", strconv.FormatInt(int64(durMs),10))
-	mmuLogHTTP.Lock()
-	defer mmuLogHTTP.Unlock()
-	_, _ = httpLogSiser.WriteRecord(&rec)
-
+	logrus.WithFields(logrus.Fields{
+		"method":     ri.method,
+		"uri":        ri.uri,
+		"refer":      ri.referer,
+		"ipaddr":     ri.ipaddr,
+		"code":       strconv.Itoa(ri.code),
+		"size":       strconv.FormatInt(ri.size, 10),
+		"path":       ri.uri,
+		"duration":   strconv.FormatInt(int64(durMs), 10),
+		"user_agent": ri.userAgent,
+	}).Info()
 }
 
 func Logger(h http.Handler) http.Handler {
@@ -109,24 +101,21 @@ func Logger(h http.Handler) http.Handler {
 
 		// this runs handler h and captures information about
 		// HTTP Request
-		m := httpsnoop.CaptureMetrics(h,w,r)
+		m := httpsnoop.CaptureMetrics(h, w, r)
 		ri.code = m.Code
-		ri.size = m.BytesWritten
+		ri.size = m.Written
 		ri.duration = m.Duration
 		logHTTPReq(ri)
 	}
 	return http.HandlerFunc(fn)
 }
+
 // func Logger(next http.Handler) http.Handler {
-// 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+// 	fn := func(w http.ResponseWriter, r *http.Request) {
 // 		start := time.Now()
-// 		logrus.WithFields(logrus.Fields{
-// 			"method":     r.Method,
-// 			"path":       r.RequestURI,
-// 			"ip":         r.RemoteAddr,
-// 			"duration":   time.Since(start),
-// 			"user_agent": r.UserAgent(),
-// 		}).Info()
+// 		m := httpsnoop.CaptureMetrics(next, w, r)
+
 // 		next.ServeHTTP(w, r)
-// 	})
+// 	}
+// 	return http.HandlerFunc(fn)
 // }
