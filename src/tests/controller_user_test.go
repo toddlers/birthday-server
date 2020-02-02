@@ -222,7 +222,7 @@ func TestUpdateUser(t *testing.T) {
 			// Adjust the birthday here to pass the test
 			// Make the date one day ahead of today
 			id:           strconv.Itoa(int(AuthID)),
-			updateJSON:   `{"name":"Woman", "email": "woman@gmail.com", "birthday": "2020-02-02"}`,
+			updateJSON:   `{"name":"Woman", "email": "woman@gmail.com", "birthday": "2020-02-03"}`,
 			statusCode:   422,
 			errorMessage: "Birthday should be before today",
 		},
